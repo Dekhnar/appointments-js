@@ -4,8 +4,20 @@ const {
   millisecondsPerFifteenMinutes,
 } = require('./utils/duration');
 
+const sortPeriodsByStartingDuration = (periods = parseDuration()) => {
+  const sortedPeriods = [...periods];
+  sortedPeriods.sort((a, b) => a[0].duration - b[0].duration);
+  return sortedPeriods;
+};
+
+const insertPeriodAt = (periods = [parseDuration()], index = 0, period = parseDuration()) => {
+  const newPeriods = [...periods];
+  newPeriods.splice(index, 0, period);
+  return newPeriods;
+};
+
 const getFreePeriods = (
-  periods = parseDuration(),
+  periods = [parseDuration()],
   {
     minimumDuration = millisecondsPerFifteenMinutes,
     workTimePeriod = [createDuration({ hours: 8 }), createDuration({ hours: 17, minutes: 59 })],
@@ -18,8 +30,7 @@ const getFreePeriods = (
   const startDuration = workTimePeriod[0].add({ days: 1 }).min({ minutes: 1 });
   periods.splice(0, 0, [startDuration, startDuration]);
 
-  // Sort the given appointments according to starting duration
-  periods.sort((a, b) => a[0].duration - b[0].duration);
+  periods = sortPeriodsByStartingDuration(periods);
 
   let i = 1;
   while (i < periods.length) {
@@ -27,7 +38,9 @@ const getFreePeriods = (
     const currStartDuration = periods[i][0];
 
     // If ending duration is less than current starting duration,
-    // then it is the ealiest free period
+    // then we check if the period is
+    // during working hours, without exceeding
+    // of an exact duration of 60 minutes, beginning and end included
     if (prevEndDuration.duration < currStartDuration.duration) {
       const tempFreePeriod = [prevEndDuration, currStartDuration];
 
@@ -58,18 +71,18 @@ const getFreePeriods = (
     }
 
     // If current ending duration is less than previous ending duration
-    // then we update current ending duration with this the previous ending duration
+    // then we update current ending duration with the previous ending duration
     if (periods[i - 1][1].duration > periods[i][1].duration) {
       periods[i][1] = periods[i - 1][1];
     }
 
-    // If we change day, we add day work start
     if (i + 1 < periods.length) {
       const nextDays = periods[i + 1][0].inDays();
       const isNewDay = currStartDuration.inDays() !== nextDays;
+      // If we change day, we add day work start
       if (isNewDay) {
         const startDuration = workTimePeriod[0].add({ days: nextDays }).min({ minutes: 1 });
-        periods.splice(i + 1, 0, [startDuration, startDuration]);
+        periods = insertPeriodAt(periods, i + 1, [startDuration, startDuration]);
       }
     }
 
