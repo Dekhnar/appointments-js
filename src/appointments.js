@@ -16,6 +16,14 @@ const insertPeriodAt = (periods = [parseDuration()], index = 0, period = parseDu
   return newPeriods;
 };
 
+const completeWithStartingWorkingDurationAt = (
+  periods = [parseDuration()],
+  index,
+  startingWorkingDuration = createDuration({ hours: 8 }),
+) => {
+  return insertPeriodAt(periods, index, [startingWorkingDuration, startingWorkingDuration]);
+};
+
 const getFreePeriods = (
   periods = [parseDuration()],
   {
@@ -27,8 +35,8 @@ const getFreePeriods = (
   if (!size) return;
   const freePeriods = [];
 
-  const startDuration = workTimePeriod[0].add({ days: 1 }).min({ minutes: 1 });
-  periods.splice(0, 0, [startDuration, startDuration]);
+  const startingWorkingDuration = workTimePeriod[0].add({ days: 1 }).min({ minutes: 1 });
+  periods = completeWithStartingWorkingDurationAt(periods, 0, startingWorkingDuration);
 
   periods = sortPeriodsByStartingDuration(periods);
 
@@ -79,10 +87,11 @@ const getFreePeriods = (
     if (i + 1 < periods.length) {
       const nextDays = periods[i + 1][0].inDays();
       const isNewDay = currStartDuration.inDays() !== nextDays;
-      // If we change day, we add day work start
       if (isNewDay) {
-        const startDuration = workTimePeriod[0].add({ days: nextDays }).min({ minutes: 1 });
-        periods = insertPeriodAt(periods, i + 1, [startDuration, startDuration]);
+        const startingWorkingDuration = workTimePeriod[0]
+          .add({ days: nextDays })
+          .min({ minutes: 1 });
+        periods = completeWithStartingWorkingDurationAt(periods, i + 1, startingWorkingDuration);
       }
     }
 
