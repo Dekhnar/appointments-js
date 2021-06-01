@@ -57,6 +57,8 @@ const getFreePeriod = (
       }
     }
 
+    // If current ending duration is less than previous ending duration
+    // then we update current ending duration with this the previous ending duration
     if (periods[i - 1][1].duration > periods[i][1].duration) {
       periods[i][1] = periods[i - 1][1];
     }

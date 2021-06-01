@@ -42,6 +42,16 @@ const createDuration = ({ days = 0, hours = 0, minutes = 0, milliseconds = 0 } =
       const { duration } = createDuration({ days, hours, minutes, milliseconds });
       return createDuration({ milliseconds: this.duration - duration });
     },
+
+    /**
+     * Returns a string representation of this `Duration`.
+     *
+     * Returns a string with days, hours, minutes
+     * following format: `d hh:mm-hh:mm`. For example,
+     *
+     *     const d = createDuration({days: 1, hours: 8, minutes: 45});
+     *     d.toString();  // "1 08:45"
+     */
     toString() {
       const twoDigits = (n = 1) => {
         return String(n).padStart(2, '0');
