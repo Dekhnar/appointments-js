@@ -4,7 +4,7 @@ const {
   millisecondsPerFifteenMinutes,
 } = require('./utils/duration');
 
-const getFreePeriod = (
+const getFreePeriods = (
   periods = parseDuration(),
   {
     minimumDuration = millisecondsPerFifteenMinutes,
@@ -79,4 +79,4 @@ const getFreePeriod = (
   return freePeriods;
 };
 
-module.exports = getFreePeriod;
+module.exports = getFreePeriods;

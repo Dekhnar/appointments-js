@@ -1,5 +1,5 @@
 const getAllFiles = require('./utils/get-all-files');
-const getFreePeriod = require('./appointments');
+const getFreePeriods = require('./appointments');
 const loadDataFile = require('./utils/load-data-file');
 const { PROJECT_ROOT_DATA } = require('./constants');
 const { parseDuration } = require('./utils/duration');
@@ -34,7 +34,7 @@ describe('Given appointments, find all free periods', () => {
     it(`verify free period for input${fileId}.txt`, async () => {
       const periods = transformAsDuration(await loadDataFile(filePath));
       const expectedOutput = await loadDataFile(outputFilePaths[fileId]);
-      const freePeriods = getFreePeriod(periods);
+      const freePeriods = getFreePeriods(periods);
       await expect(freePeriods).toEqual(expect.arrayContaining(expectedOutput));
     });
   });

@@ -1,4 +1,4 @@
-const getFreePeriod = require('./appointments');
+const getFreePeriods = require('./appointments');
 const getAllFiles = require('./utils/get-all-files');
 const loadDataFile = require('./utils/load-data-file');
 const { parseDuration } = require('./utils/duration');
@@ -26,7 +26,7 @@ const inputFilePaths = filePaths
     await previousPromise;
     try {
       const periods = transformAsDuration(await loadDataFile(filePath));
-      const freePeriod = getFreePeriod(periods);
+      const freePeriod = getFreePeriods(periods);
       console.log(freePeriod);
     } catch (_) {}
   }, Promise.resolve);
