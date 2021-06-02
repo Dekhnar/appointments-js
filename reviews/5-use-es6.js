@@ -1,5 +1,5 @@
 /**
- * (5) you can use map here for transforming each item directly
+ * (5) you can use es6 to convert nodelist into array
  */
 // function getParagraphTexts() {
 //   const texts = [];
@@ -11,5 +11,5 @@
 
 // my implementation
 // function getParagraphTexts() {
-//   return document.querySelectorAll('p').map((p) => p);
+//   return [...document.querySelectorAll('p')];
 // }
